@@ -8,10 +8,10 @@ import java.util.function.Supplier;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import dev.langchain4j.mcp.client.protocol.McpClientMessage;
-import dev.langchain4j.mcp.client.protocol.McpInitializeRequest;
 import dev.langchain4j.mcp.client.transport.McpOperationHandler;
 import dev.langchain4j.mcp.client.transport.McpTransport;
+import dev.langchain4j.mcp.protocol.McpClientMessage;
+import dev.langchain4j.mcp.protocol.McpInitializeRequest;
 
 public class SamplingMcpTransport implements McpTransport {
 
@@ -40,12 +40,22 @@ public class SamplingMcpTransport implements McpTransport {
         Supplier<?> roots = getFieldValue(original, "roots");
         Consumer<?> logMessageConsumer = getFieldValue(original, "logMessageConsumer");
         Runnable onToolListUpdate = getFieldValue(original, "onToolListUpdate");
+        Runnable onResourceListUpdate = getFieldValue(original, "onResourceListUpdate");
+        Runnable onPromptListUpdate = getFieldValue(original, "onPromptListUpdate");
+        Consumer<String> onResourceUpdate = getFieldValue(original, "onResourceUpdate");
+        dev.langchain4j.mcp.client.progress.McpProgressHandler progressHandler =
+                getFieldValue(original, "progressHandler");
 
-        // Note: McpOperationHandler constructor signature:
-        // (Map pendingOperations, Supplier roots, McpTransport transport, Consumer logMessageConsumer, Runnable
-        // onToolListUpdate)
         return new McpOperationHandler(
-                pendingOperations, (Supplier) roots, this, (Consumer) logMessageConsumer, onToolListUpdate) {
+                pendingOperations,
+                (Supplier) roots,
+                this,
+                (Consumer) logMessageConsumer,
+                onToolListUpdate,
+                onResourceListUpdate,
+                onPromptListUpdate,
+                onResourceUpdate,
+                progressHandler) {
             @Override
             public void handle(JsonNode node) {
                 if (node.has("method")
@@ -100,6 +110,16 @@ public class SamplingMcpTransport implements McpTransport {
     }
 
     @Override
+    public CompletableFuture<JsonNode> executeOperationWithResponse(dev.langchain4j.mcp.client.McpCallContext context) {
+        return delegate.executeOperationWithResponse(context);
+    }
+
+    @Override
+    public void executeOperationWithoutResponse(dev.langchain4j.mcp.client.McpCallContext context) {
+        delegate.executeOperationWithoutResponse(context);
+    }
+
+    @Override
     public void checkHealth() {
         delegate.checkHealth();
     }
@@ -118,7 +138,7 @@ public class SamplingMcpTransport implements McpTransport {
         private final JsonNode result;
 
         public SamplingResponseMessage(Long id, JsonNode result) {
-            super(id);
+            super(id, null);
             this.result = result;
         }
 
@@ -131,7 +151,7 @@ public class SamplingMcpTransport implements McpTransport {
         private final JsonNode error;
 
         public SamplingErrorMessage(Long id, JsonNode error) {
-            super(id);
+            super(id, null);
             this.error = error;
         }
 
