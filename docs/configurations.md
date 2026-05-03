@@ -120,20 +120,21 @@ Configuration for the main Wanaku Router Backend (`wanaku-router-backend`), whic
 
 ### Authentication & Authorization (OIDC)
 
-| Property                                | Description                                                                              |
+| Property | Description |
 |-----------------------------------------|------------------------------------------------------------------------------------------|
-| `auth.server`                           | The base address of the Keycloak authentication server (e.g., `http://localhost:8543`).  |
-| `auth.proxy`                            | The public-facing address of the OIDC proxy (e.g., `http://localhost:8080`).             |
-| `quarkus.oidc.auth-server-url`          | The full URL to the Keycloak realm, derived from `auth.server`.                          |
-| `quarkus.oidc.client-id`                | `wanaku-mcp-router` - The OIDC client ID for the router backend itself.                  |
-| `quarkus.oidc.application-type`         | `hybrid` - Allows the backend to act as both a web app (for the admin UI) and a service. |
-| `quarkus.oidc.tls.verification`         | `none` - Disables TLS verification for the OIDC provider (for development).              |
-| `quarkus.oidc-proxy.enabled`            | `true` - Enables the OIDC proxy feature, which simplifies OIDC integration.              |
-| `quarkus.http.auth.permission.*.paths`  | Defines path patterns for different security policies (`permit`, `authenticated`).       |
-| `quarkus.http.auth.permission.*.policy` | Assigns a security policy to the corresponding path pattern.                             |
+| `wanaku.router.http-auth` | `keycloak` - Controls authentication mode. Set to `none` to disable OIDC and permit all paths. Also settable via `WANAKU_ROUTER_HTTP_AUTH` environment variable. |
+| `auth.server` | The base address of the Keycloak authentication server (e.g., `http://localhost:8543`). |
+| `auth.proxy` | The public-facing address of the OIDC proxy (e.g., `http://localhost:8080`). |
+| `quarkus.oidc.auth-server-url` | The full URL to the Keycloak realm, derived from `auth.server`. |
+| `quarkus.oidc.client-id` | `wanaku-mcp-router` - The OIDC client ID for the router backend itself. |
+| `quarkus.oidc.application-type` | `hybrid` - Allows the backend to act as both a web app (for the admin UI) and a service. |
+| `quarkus.oidc.tls.verification` | `none` - Disables TLS verification for the OIDC provider (for development). |
+| `quarkus.oidc-proxy.enabled` | `true` - Enables the OIDC proxy feature, which simplifies OIDC integration. |
+| `quarkus.http.auth.permission.*.paths` | Defines path patterns for different security policies (`permit`, `authenticated`). |
+| `quarkus.http.auth.permission.*.policy` | Assigns a security policy to the corresponding path pattern. |
 
-To run without authentication, activate the `noauth` Quarkus profile (e.g., `QUARKUS_PROFILE=noauth`). This disables
-OIDC and permits all paths. See the [Usage Guide](usage.md#running-without-authentication) for details.
+To run without authentication, set `wanaku.router.http-auth=none` (or `WANAKU_ROUTER_HTTP_AUTH=none` via environment variable).
+This disables OIDC and permits all paths. See the [Usage Guide](usage.md#running-without-authentication) for details.
 
 ### Health Check
 
@@ -176,6 +177,7 @@ These settings apply regardless of whether you use the shared HTTP listener or a
 
 | Property | Description |
 |------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| `wanaku.http.auth` | `keycloak` - Controls authentication mode for capability services. Set to `none` to disable OIDC client. Also settable via `WANAKU_HTTP_AUTH` environment variable. |
 | `wanaku.service.name` | The unique, lowercase name of the service (e.g., `exec`, `http`). |
 | `wanaku.service.base-uri` | The base URI scheme for tools provided by this service (e.g., `exec://`). |
 | `wanaku.service.exec.allowed-executables` | Comma-separated absolute executable paths that the Exec tool may run. |

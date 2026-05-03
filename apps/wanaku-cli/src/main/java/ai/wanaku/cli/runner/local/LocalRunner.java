@@ -109,7 +109,7 @@ public class LocalRunner {
                         componentDir,
                         environment.serviceOptions(),
                         "java",
-                        "-Dquarkus.profile=noauth",
+                        "-Dwanaku.router.http-auth=none",
                         "-jar",
                         "quarkus-run.jar");
             } catch (Exception e) {
@@ -138,7 +138,7 @@ public class LocalRunner {
                         environment.serviceOptions(),
                         "java",
                         grpcPortOpt,
-                        "-Dquarkus.profile=noauth",
+                        "-Dwanaku.http.auth=none",
                         "-jar",
                         "quarkus-run.jar");
             } catch (Exception e) {

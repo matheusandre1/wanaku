@@ -14,10 +14,29 @@ import static org.mockito.Mockito.when;
 
 class OidcReadinessCheckTest {
 
+    private static final String KEYCLOAK = "keycloak";
+    private static final String AUTH_SERVER_URL = "http://localhost:8543/realms/wanaku";
+    private static final String DISCOVERY_URL = AUTH_SERVER_URL + "/.well-known/openid-configuration";
+
     @Test
     void call_returnsUp_whenOidcIsDisabled() {
         OidcReadinessCheck check = new OidcReadinessCheck();
         check.oidcEnabled = false;
+        check.httpAuth = KEYCLOAK;
+
+        HealthCheckResponse response = check.call();
+
+        assertEquals("oidc", response.getName());
+        assertTrue(response.getStatus() == HealthCheckResponse.Status.UP);
+        assertTrue(response.getData().isPresent());
+        assertEquals("disabled", getDataValue(response, "status"));
+    }
+
+    @Test
+    void call_returnsUp_whenHttpAuthIsNone() {
+        OidcReadinessCheck check = new OidcReadinessCheck();
+        check.oidcEnabled = true;
+        check.httpAuth = "none";
 
         HealthCheckResponse response = check.call();
 
@@ -34,12 +53,13 @@ class OidcReadinessCheckTest {
 
         HttpConnectionProvider connectionProvider = mock(HttpConnectionProvider.class);
         when(connectionProvider.createConnection(
-                        "http://localhost:8543/realms/wanaku/.well-known/openid-configuration"))
+                        DISCOVERY_URL))
                 .thenReturn(connection);
 
         OidcReadinessCheck check = new OidcReadinessCheck();
         check.oidcEnabled = true;
-        check.authServerUrl = "http://localhost:8543/realms/wanaku";
+        check.httpAuth = KEYCLOAK;
+        check.authServerUrl = AUTH_SERVER_URL;
         check.discoveryEnabled = true;
         check.httpConnectionProvider = connectionProvider;
 
@@ -58,12 +78,13 @@ class OidcReadinessCheckTest {
 
         HttpConnectionProvider connectionProvider = mock(HttpConnectionProvider.class);
         when(connectionProvider.createConnection(
-                        "http://localhost:8543/realms/wanaku/.well-known/openid-configuration"))
+                        DISCOVERY_URL))
                 .thenReturn(connection);
 
         OidcReadinessCheck check = new OidcReadinessCheck();
         check.oidcEnabled = true;
-        check.authServerUrl = "http://localhost:8543/realms/wanaku";
+        check.httpAuth = KEYCLOAK;
+        check.authServerUrl = AUTH_SERVER_URL;
         check.discoveryEnabled = true;
         check.httpConnectionProvider = connectionProvider;
 
@@ -87,6 +108,7 @@ class OidcReadinessCheckTest {
 
         OidcReadinessCheck check = new OidcReadinessCheck();
         check.oidcEnabled = true;
+        check.httpAuth = KEYCLOAK;
         check.authServerUrl = "not-a-valid-url";
         check.discoveryEnabled = true;
         check.httpConnectionProvider = connectionProvider;
@@ -106,12 +128,13 @@ class OidcReadinessCheckTest {
 
         HttpConnectionProvider connectionProvider = mock(HttpConnectionProvider.class);
         when(connectionProvider.createConnection(
-                        "http://localhost:8543/realms/wanaku/.well-known/openid-configuration"))
+                        DISCOVERY_URL))
                 .thenReturn(connection);
 
         OidcReadinessCheck check = new OidcReadinessCheck();
         check.oidcEnabled = true;
-        check.authServerUrl = "http://localhost:8543/realms/wanaku";
+        check.httpAuth = KEYCLOAK;
+        check.authServerUrl = AUTH_SERVER_URL;
         check.discoveryEnabled = true;
         check.httpConnectionProvider = connectionProvider;
 
@@ -125,6 +148,7 @@ class OidcReadinessCheckTest {
     void call_returnsDown_whenAuthServerUrlIsNull() {
         OidcReadinessCheck check = new OidcReadinessCheck();
         check.oidcEnabled = true;
+        check.httpAuth = KEYCLOAK;
         check.authServerUrl = null;
         check.discoveryEnabled = true;
 
@@ -139,6 +163,7 @@ class OidcReadinessCheckTest {
     void call_returnsDown_whenAuthServerUrlIsEmpty() {
         OidcReadinessCheck check = new OidcReadinessCheck();
         check.oidcEnabled = true;
+        check.httpAuth = KEYCLOAK;
         check.authServerUrl = " ";
         check.discoveryEnabled = true;
 
@@ -155,12 +180,13 @@ class OidcReadinessCheckTest {
         when(connection.getResponseCode()).thenReturn(200);
 
         HttpConnectionProvider connectionProvider = mock(HttpConnectionProvider.class);
-        when(connectionProvider.createConnection("http://localhost:8543/realms/wanaku"))
+        when(connectionProvider.createConnection(AUTH_SERVER_URL))
                 .thenReturn(connection);
 
         OidcReadinessCheck check = new OidcReadinessCheck();
         check.oidcEnabled = true;
-        check.authServerUrl = "http://localhost:8543/realms/wanaku";
+        check.httpAuth = KEYCLOAK;
+        check.authServerUrl = AUTH_SERVER_URL;
         check.discoveryEnabled = false;
         check.httpConnectionProvider = connectionProvider;
 
