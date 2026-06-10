@@ -73,6 +73,8 @@ message CodeExecutionRequest {
    * These environment variables will be set in the execution context.
    */
   map<string, string> environment = 8;
+
+  string request_id = 9;
 }
 
 /**

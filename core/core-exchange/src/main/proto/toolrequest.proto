@@ -20,6 +20,7 @@ message ToolInvokeRequest {
   string configuration_uri = 4;
   string secrets_uri = 5;
   map<string, string> headers = 6;
+  string request_id = 7;
 }
 
 // The invocation response message

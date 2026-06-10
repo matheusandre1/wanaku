@@ -84,12 +84,17 @@ public class InvokerBridge implements ToolsBridge {
                             "Only local tool call references should be invoked by this executor"));
         }
 
+        String requestId = toolArguments.requestId().asString();
+        String connectionId = toolArguments.connection().id();
+
         return Uni.createFrom()
                 .item(() -> WanakuToolContext.create(toolArguments, ref))
                 .runSubscriptionOn(Infrastructure.getDefaultExecutor())
+                .invoke(ctx -> RequestIdContext.setContext(requestId, connectionId))
+                .invoke(ctx -> RequestIdContext.setToolName(ref.getName()))
                 .invoke(this::resolveService)
                 .invoke(ctx -> {
-                    ctx.request = InvokerToolExecutor.buildToolInvokeRequest(ref, toolArguments);
+                    ctx.request = InvokerToolExecutor.buildToolInvokeRequest(ref, toolArguments, requestId);
                     ctx.startTime = Instant.now();
                     if (eventNotifier != null) {
                         ctx.startedEvent =
@@ -105,7 +110,9 @@ public class InvokerBridge implements ToolsBridge {
 
                             LOG.debugf(failure, "Handling failure: %s", failure.getMessage());
                             return ToolResponse.error(failure.getMessage());
-                        }));
+                        }))
+                .onItemOrFailure()
+                .invoke((item, failure) -> RequestIdContext.clear());
     }
 
     private void emitCompleted(WanakuToolContext ctx, ToolResponse response) {

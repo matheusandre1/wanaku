@@ -51,17 +51,39 @@
                                     <artifactId>capabilities-exchange</artifactId>
                                     <version>${wanaku-capabilities-sdk.version}</version>
                                     <classifier>sources</classifier>
-                                    <outputDirectory>${project.basedir}/src/main/proto</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/proto-sdk</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>${quarkus.platform.group-id}</groupId>
-                <artifactId>quarkus-maven-plugin</artifactId>
+    </plugin>
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>exec-maven-plugin</artifactId>
+      <version>3.5.0</version>
+      <executions>
+        <execution>
+          <id>copy-sdk-protos</id>
+          <phase>generate-sources</phase>
+          <goals>
+            <goal>exec</goal>
+          </goals>
+          <configuration>
+            <executable>bash</executable>
+            <arguments>
+              <argument>${project.basedir}/copy-sdk-protos.sh</argument>
+              <argument>${project.build.directory}/proto-sdk</argument>
+              <argument>${project.basedir}/src/main/proto</argument>
+            </arguments>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+    <plugin>
+      <groupId>${quarkus.platform.group-id}</groupId>
+      <artifactId>quarkus-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

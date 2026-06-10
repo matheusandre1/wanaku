@@ -319,37 +319,6 @@ export const getApiV1CapabilitiesToolsState = async (
 };
 
 /**
- * @summary Get Base Urls
- */
-export type getApiV1ChatAllowlistResponse200 = {
-  data: string[];
-  status: 200;
-};
-
-export type getApiV1ChatAllowlistResponseSuccess =
-  getApiV1ChatAllowlistResponse200 & {
-    headers: Headers;
-  };
-export type getApiV1ChatAllowlistResponse =
-  getApiV1ChatAllowlistResponseSuccess;
-
-export const getGetApiV1ChatAllowlistUrl = () => {
-  return `/api/v1/chat/allowlist`;
-};
-
-export const getApiV1ChatAllowlist = async (
-  options?: RequestInit,
-): Promise<getApiV1ChatAllowlistResponse> => {
-  return customFetch<getApiV1ChatAllowlistResponse>(
-    getGetApiV1ChatAllowlistUrl(),
-    {
-      ...options,
-      method: "GET",
-    },
-  );
-};
-
-/**
  * @summary Code Completions
  */
 export type postApiV1ChatCompletionsResponse200 = {
@@ -379,6 +348,64 @@ export const postApiV1ChatCompletions = async (
       method: "POST",
       headers: { "Content-Type": "application/json", ...options?.headers },
       body: JSON.stringify(postApiV1ChatCompletionsBody),
+    },
+  );
+};
+
+/**
+ * @summary Get Allowed Llms
+ */
+export type getApiV1ChatLlmsResponse200 = {
+  data: string[];
+  status: 200;
+};
+
+export type getApiV1ChatLlmsResponseSuccess = getApiV1ChatLlmsResponse200 & {
+  headers: Headers;
+};
+export type getApiV1ChatLlmsResponse = getApiV1ChatLlmsResponseSuccess;
+
+export const getGetApiV1ChatLlmsUrl = () => {
+  return `/api/v1/chat/llms`;
+};
+
+export const getApiV1ChatLlms = async (
+  options?: RequestInit,
+): Promise<getApiV1ChatLlmsResponse> => {
+  return customFetch<getApiV1ChatLlmsResponse>(getGetApiV1ChatLlmsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+/**
+ * @summary Get Models
+ */
+export type getApiV1ChatLlmModelsResponse200 = {
+  data: string[];
+  status: 200;
+};
+
+export type getApiV1ChatLlmModelsResponseSuccess =
+  getApiV1ChatLlmModelsResponse200 & {
+    headers: Headers;
+  };
+export type getApiV1ChatLlmModelsResponse =
+  getApiV1ChatLlmModelsResponseSuccess;
+
+export const getGetApiV1ChatLlmModelsUrl = (llm: string) => {
+  return `/api/v1/chat/${llm}/models`;
+};
+
+export const getApiV1ChatLlmModels = async (
+  llm: string,
+  options?: RequestInit,
+): Promise<getApiV1ChatLlmModelsResponse> => {
+  return customFetch<getApiV1ChatLlmModelsResponse>(
+    getGetApiV1ChatLlmModelsUrl(llm),
+    {
+      ...options,
+      method: "GET",
     },
   );
 };

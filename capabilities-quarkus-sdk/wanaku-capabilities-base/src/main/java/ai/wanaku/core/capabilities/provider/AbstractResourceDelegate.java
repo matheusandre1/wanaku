@@ -98,6 +98,10 @@ public abstract class AbstractResourceDelegate implements ResourceAcquirerDelega
 
     @Override
     public ResourceReply acquire(ResourceRequest request) {
+        String requestId = request.getRequestId();
+        if (requestId != null && !requestId.isEmpty()) {
+            org.jboss.logging.MDC.put("requestId", requestId);
+        }
         try {
             ConfigResource configResource = ConfigResourceLoader.loadFromRequest(request);
 
@@ -124,6 +128,8 @@ public abstract class AbstractResourceDelegate implements ResourceAcquirerDelega
             LOG.error(stateMsg, e);
             throw new StatusRuntimeException(
                     Status.INTERNAL.withDescription(stateMsg).withCause(e));
+        } finally {
+            org.jboss.logging.MDC.remove("requestId");
         }
     }
 

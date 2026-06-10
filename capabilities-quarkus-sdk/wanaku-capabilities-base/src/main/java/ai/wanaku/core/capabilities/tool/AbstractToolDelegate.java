@@ -84,6 +84,10 @@ public abstract class AbstractToolDelegate implements InvocationDelegate {
 
     @Override
     public ToolInvokeReply invoke(ToolInvokeRequest request) {
+        String requestId = request.getRequestId();
+        if (requestId != null && !requestId.isEmpty()) {
+            org.jboss.logging.MDC.put("requestId", requestId);
+        }
         try {
             ConfigResource configResource = ConfigResourceLoader.loadFromRequest(request);
 
@@ -110,6 +114,8 @@ public abstract class AbstractToolDelegate implements InvocationDelegate {
             LOG.error(stateMsg, e);
             throw new StatusRuntimeException(
                     Status.INTERNAL.withDescription(stateMsg).withCause(e));
+        } finally {
+            org.jboss.logging.MDC.remove("requestId");
         }
     }
 

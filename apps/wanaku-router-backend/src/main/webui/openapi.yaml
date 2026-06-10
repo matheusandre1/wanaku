@@ -832,20 +832,6 @@ paths:
       summary: Tools State
       tags:
       - Capabilities Resource
-  /api/v1/chat/allowlist:
-    get:
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-      summary: Get Base Urls
-      tags:
-      - Llm Chat Resource
   /api/v1/chat/completions:
     post:
       requestBody:
@@ -858,10 +844,44 @@ paths:
         "200":
           description: OK
           content:
-            application/json:
+            text/plain:
               schema:
                 type: string
       summary: Code Completions
+      tags:
+      - Llm Chat Resource
+  /api/v1/chat/llms:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      summary: Get Allowed Llms
+      tags:
+      - Llm Chat Resource
+  /api/v1/chat/{llm}/models:
+    get:
+      parameters:
+      - name: llm
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      summary: Get Models
       tags:
       - Llm Chat Resource
   /api/v1/data-store:
