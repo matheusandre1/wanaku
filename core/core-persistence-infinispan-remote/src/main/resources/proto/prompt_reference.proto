@@ -8,13 +8,13 @@ import "content.proto";
 // Prompts are reusable templates that can leverage multiple tools and provide
 // example interactions for LLMs.
 /** @Indexed */
-
-/** @Keyword */
-
-/** @Keyword */
-
-/** @Text */
-
+message PromptReference {
+  /** @Keyword */
+  string id = 1;
+  /** @Keyword */
+  string name = 2;
+  /** @Text */
+  string description = 3;
   repeated PromptMessage messages = 4;
   repeated PromptArgument arguments = 5;
   repeated string tool_references = 6;

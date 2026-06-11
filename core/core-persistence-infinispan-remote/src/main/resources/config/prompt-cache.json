@@ -1,0 +1,23 @@
+{
+  "distributed-cache": {
+    "mode": "SYNC",
+    "statistics": true,
+    "encoding": { "media-type": "application/x-protostream" },
+    "indexing": {
+      "enabled": true,
+      "storage": "local-heap",
+      "startup-mode": "auto",
+      "indexed-entities": [
+        "ai.wanaku.capabilities.sdk.api.types.PromptReference",
+        "ai.wanaku.capabilities.sdk.api.types.PromptReference$PromptMessage",
+        "ai.wanaku.capabilities.sdk.api.types.PromptReference$PromptArgument",
+        "ai.wanaku.capabilities.sdk.api.types.TextContent",
+        "ai.wanaku.capabilities.sdk.api.types.ImageContent",
+        "ai.wanaku.capabilities.sdk.api.types.AudioContent",
+        "ai.wanaku.capabilities.sdk.api.types.EmbeddedResource",
+        "ai.wanaku.capabilities.sdk.api.types.ResourceReference",
+        "ai.wanaku.capabilities.sdk.api.types.ResourceReference$Param"
+      ]
+    }
+  }
+}
