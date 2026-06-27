@@ -1,6 +1,8 @@
 package ai.wanaku.core.util;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.function.Supplier;
 
 /**
  * Centralized resolution of the Wanaku home directory.
@@ -28,7 +30,7 @@ public class WanakuHome {
      * @return the default path to the Wanaku home directory
      */
     private static String defaultWanakuHome() {
-        return System.getProperty("user.home") + File.separator + ".wanaku";
+        return Paths.get(System.getProperty("user.home"), ".wanaku").toString();
     }
 
     /**
@@ -55,9 +57,12 @@ public class WanakuHome {
      * <p>
      * Currently supported placeholders:
      * <ul>
-     *   <li>{@code ${wanaku.home}} - expands to the Wanaku home directory</li>
-     *   <li>{@code ${user.home}} - expands to the user's home directory</li>
+     * <li>{@code ${wanaku.home}} - expands to the Wanaku home directory</li>
+     * <li>{@code ${user.home}} - expands to the user's home directory</li>
      * </ul>
+     * <p>
+     * Uses {@link Path#normalize()} to avoid doubled separators when placeholders
+     * resolve to paths whose trailing separator meets a slash between placeholders.
      *
      * @param path the path string potentially containing placeholders
      * @return the path with placeholders expanded
@@ -66,6 +71,14 @@ public class WanakuHome {
         if (path == null) {
             return null;
         }
-        return path.replace("${wanaku.home}", get()).replace("${user.home}", System.getProperty("user.home"));
+        return expandPlaceholders(path, WanakuHome::get, () -> System.getProperty("user.home"));
+    }
+
+    static String expandPlaceholders(String path, Supplier<String> wanakuHome, Supplier<String> userHome) {
+        if (path == null) {
+            return null;
+        }
+        String result = path.replace("${wanaku.home}", wanakuHome.get()).replace("${user.home}", userHome.get());
+        return Paths.get(result).normalize().toString();
     }
 }

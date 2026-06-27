@@ -23,7 +23,10 @@ public class AuthCredentialStore {
 
     private static final Logger LOG = Logger.getLogger(AuthCredentialStore.class);
 
-    private static final String DEFAULT_CREDENTIALS_FILE = WanakuHome.get() + File.separator + "credentials";
+    private static String defaultCredentialsFile() {
+        return Paths.get(WanakuHome.get()).resolve("credentials").normalize().toString();
+    }
+
     private static final String API_TOKEN_KEY = "api.token";
     private static final String REFRESH_TOKEN_KEY = "refresh.token";
     private static final String AUTH_MODE_KEY = "auth.mode";
@@ -34,7 +37,7 @@ public class AuthCredentialStore {
     private final URI credentialsUri;
 
     public AuthCredentialStore() {
-        this(resolveCredentialsPath(DEFAULT_CREDENTIALS_FILE));
+        this(resolveCredentialsPath(defaultCredentialsFile()));
     }
 
     public AuthCredentialStore(String credentialsPath) {
